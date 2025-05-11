@@ -1,0 +1,29 @@
+version: '3'
+services:
+  product-service:
+    build: ./services/product-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongodb
+  customer-service:
+    build: ./services/customer-service
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+  shopping-service:
+    build: ./services/shopping-service
+    ports:
+      - "3003:3003"
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: customerdb
+    ports:
+      - "5432:5432"
