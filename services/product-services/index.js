@@ -28,6 +28,7 @@ const Category = mongoose.model('Category', CategorySchema);
 // Product Schema and Model
 const ProductSchema = new mongoose.Schema({
   name: String,
+  image:String,
   price: Number,
   description: String,
   category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
@@ -70,22 +71,11 @@ app.post('/categories', upload.single('image'), async (req, res) => {
 }
 });
 
-// Get products by category ID
-app.get('/products/:id', async (req, res) => {
-  try {
-    const categoryId = req.params.id;
-    const products = await Product.find({ category: categoryId }).populate('category');
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ message: 'Server Error', error });
-  }
-});
-
 // Add a product
-app.post('/products', async (req, res) => {
+app.post('/products',upload.single('image'), async (req, res) => {
   try {
     const { name, price, description, categoryId } = req.body;
-
+    const image = req.file?.filename;
     const category = await Category.findById(categoryId);
     if (!category) {
       return res.status(400).send('Invalid category');
@@ -93,6 +83,7 @@ app.post('/products', async (req, res) => {
 
     const product = new Product({
       name,
+      image,
       price,
       description,
       category: category._id,
@@ -102,6 +93,17 @@ app.post('/products', async (req, res) => {
     res.json(product);
   } catch (error) {
     res.status(500).json({ message: 'Failed to add product', error });
+  }
+});
+
+// Get products by category ID
+app.get('/products/:id', async (req, res) => {
+  try {
+    const categoryId = req.params.id;
+    const products = await Product.find({ category: categoryId }).populate('category');
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: 'Server Error', error });
   }
 });
 

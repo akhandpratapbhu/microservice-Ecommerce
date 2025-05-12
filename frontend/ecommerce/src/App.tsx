@@ -5,9 +5,12 @@ import SignupCustomer from './customers/SignupCustomer';
 import CategoryAndProductScreen from './products/CategoryAndProductScreen';
 import CreateCategory from './products/CreateCategory';
 import CreateProduct from './products/CreateProduct';
-
+import { CartProvider } from './shopping/CartContext';
+import AddToCart from './shopping/AddToCart';
+import PaymentPage from './shopping/payments';
 const App = () => {
   return (
+    <CartProvider>
     <Router>
       <div style={{ padding: '20px' }}>
         {/* Optional Navigation Links */}
@@ -15,6 +18,7 @@ const App = () => {
           <Link to="/create-products" style={{ marginRight: '20px' }}>Create Product</Link>
           <Link to="/create-category">Create Category</Link>
           <Link to="/products" style={{ marginLeft: '20px' }}>Products</Link>
+          <Link to="/AddToCart" style={{ marginLeft: '20px' }}>Carts</Link>
         </nav>
 
         <Routes>
@@ -23,9 +27,12 @@ const App = () => {
           <Route path="/create-products" element={<CreateProduct />} />
 
           <Route path="/products" element={<CategoryAndProductScreen />} />
+          <Route path="/AddToCart" element={<AddToCart />} />
+          <Route path="/stripePayment" element={<PaymentPage />} />
         </Routes>
       </div>
     </Router>
+    </CartProvider>
   );
 };
 

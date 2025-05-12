@@ -16,10 +16,11 @@ const CategoryAndProductScreen = () => {
   interface Product {
     id: string;
     name: string;
+    image: string;
     price: number;
     description: string;
   }
-  
+
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -40,41 +41,43 @@ const CategoryAndProductScreen = () => {
   const fetchProducts = async (categoryId: any) => {
     setLoading(true);
     console.log('Fetching products for category:', categoryId);
-    
+
     setSelectedCategory(categoryId._id);
 
     try {
       const response = await axios.get(`http://localhost:8000/products/products/${categoryId._id}`);
       setProducts(response.data);
       console.log('Products:', response.data);
-      
+
     } catch (error) {
       console.error('Error fetching products:', error);
     } finally {
       setLoading(false);
     }
   };
-console.log(selectedCategory);
+  console.log(selectedCategory);
 
   return (
     <div style={{ padding: '20px' }}>
       <h2>Categories</h2>
-      <Grid container spacing={2}>
-        {categories.map((category) => (
-          <Grid container  key={category.id}>
-            <CategoryCard category={category} onClick={() => fetchProducts(category)} />
-          </Grid>
-        ))}
-      </Grid>
-
+      <div className='row'>
+        <Grid container spacing={2}>
+          {categories.map((category) => (
+            <Grid container key={category.id}>
+              <CategoryCard category={category} onClick={() => fetchProducts(category)} />
+            </Grid>
+          ))}
+        </Grid>
+      </div>
       {selectedCategory && <h3>Products in Category {selectedCategory}</h3>}
-
-      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        {loading ? (
-          <CircularProgress />
-        ) : (
-          products.map((product) => <ProductCard key={product.id} product={product} />)
-        )}
+      <div className='row'>
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+          {loading ? (
+            <CircularProgress />
+          ) : (
+            products.map((product) => <ProductCard key={product.id} product={product} />)
+          )}
+        </div>
       </div>
     </div>
   );

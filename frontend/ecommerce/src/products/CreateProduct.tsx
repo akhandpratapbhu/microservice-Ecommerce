@@ -8,7 +8,7 @@ const CreateProduct = () => {
   const [description, setDescription] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [categories, setCategories] = useState<{ _id: string; name: string }[]>([]);
-
+const [image, setImage] = useState<File | null>(null);
   useEffect(() => {
     // Fetch categories from backend
     const fetchCategories = async () => {
@@ -22,21 +22,29 @@ const CreateProduct = () => {
     fetchCategories();
   }, []);
 
-  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!name || !image) {
+      setError('Both product name and image are required');
+      return;
+    }
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('image', image);
+    formData.append('price', price);
+    formData.append('description', description);
+    formData.append('categoryId', categoryId);
     try {
-      const response = await axios.post('http://localhost:8000/products/products', {
-        name,
-        price,
-        description,
-        categoryId,
-      });
+      const response = await axios.post('http://localhost:8000/products/products', 
+        formData
+      );
       console.log('Product added:', response.data);
       // Clear form
       setName('');
       setPrice('');
       setDescription('');
       setCategoryId('');
+      setImage(null)
     } catch (error) {
       console.error('Error adding product:', error);
     }
@@ -53,6 +61,16 @@ const CreateProduct = () => {
           placeholder="Product Name"
           required
         />
+          <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            setImage(file);
+          }
+        }}
+      />
         <input
           type="number"
           value={price}
@@ -85,3 +103,7 @@ const CreateProduct = () => {
 };
 
 export default CreateProduct;
+function setError(arg0: string) {
+  throw new Error('Function not implemented.');
+}
+
