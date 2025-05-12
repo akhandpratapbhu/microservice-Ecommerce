@@ -7,7 +7,8 @@ import CreateCategory from './products/CreateCategory';
 import CreateProduct from './products/CreateProduct';
 import { CartProvider } from './shopping/CartContext';
 import AddToCart from './shopping/AddToCart';
-import PaymentPage from './shopping/payments';
+import Sucess from './shopping/Sucess';
+import Cancel from './shopping/Cancel';
 const App = () => {
   return (
     <CartProvider>
@@ -28,7 +29,8 @@ const App = () => {
 
           <Route path="/products" element={<CategoryAndProductScreen />} />
           <Route path="/AddToCart" element={<AddToCart />} />
-          <Route path="/stripePayment" element={<PaymentPage />} />
+          <Route path="/success" element={<Sucess />} />
+            <Route path="/cancel" element={<Cancel />} />
         </Routes>
       </div>
     </Router>

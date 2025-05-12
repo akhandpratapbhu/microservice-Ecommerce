@@ -1,14 +1,43 @@
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../shopping/CartContext';
+import {loadStripe} from '@stripe/stripe-js';
 
 const AddToCart = () => {
     const { cart } = useCart();
     console.log("cart", cart);
     const navigate = useNavigate();
 
-    const handleClick = () => {
-      navigate('/stripePayment'); // your desired route
-    };
+   // payment integration
+    const makePayment = async()=>{
+        const stripe = await loadStripe("pk_test_51RO0bOIkMm1UrW60QwzbLTs9PvVvMmw8CZhqg6kp1rxQmY62YQZiAaqcLprLLrbVgHT1zSQFa3OqJaHNkwxhQpO000rS6La0X1");//ENTER YOUR PUBLISHABLE KEY
+        const body = {
+            products:cart
+        }
+        const headers = {
+            "Content-Type":"application/json"
+        }
+        const response = await fetch("http://localhost:3003/api/create-checkout-session",{
+            method:"POST",
+            headers:headers,
+            body:JSON.stringify(body)
+        });
+
+        const session = await response.json();
+
+        if (!stripe) {
+            console.error("Stripe failed to load.");
+            return;
+        }
+
+        const result = await stripe.redirectToCheckout({
+            sessionId: session.id
+        });
+        
+        if(result.error){
+            console.log(result.error);
+        }
+    }
+
     return (
         <div style={{ padding: '20px' }}>
             <h2>🛒 Cart</h2>
@@ -50,7 +79,7 @@ const AddToCart = () => {
             }
 
             {cart.length !== 0 && (
-                <button style={{ backgroundColor: 'green' }}onClick={handleClick}>Proceed to Buy</button>
+                <button style={{ backgroundColor: 'green' }}onClick={makePayment}>Proceed to Buy</button>
             )}
 
         </div>
