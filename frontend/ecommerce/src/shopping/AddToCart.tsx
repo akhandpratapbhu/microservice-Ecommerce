@@ -66,13 +66,16 @@ console.log("cart",cart);
         const headers = {
             "Content-Type": "application/json"
         }
+        console.log("sessionbefore", );
+
         const response = await fetch("http://localhost:3003/api/create-checkout-session", {
             method: "POST",
             headers: headers,
             body: JSON.stringify(body)
         });
 
-        const session = await response.json();
+         const session = await response.json();
+console.log("session", session);
 
         if (!stripe) {
             console.error("Stripe failed to load.");
@@ -80,7 +83,7 @@ console.log("cart",cart);
         }
 
         const result = await stripe.redirectToCheckout({
-            sessionId: session.id
+            sessionId: session.session.id
         });
 
         if (result.error) {

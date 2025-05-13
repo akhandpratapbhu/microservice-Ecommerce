@@ -1,5 +1,5 @@
-// src/components/ProductCard.js
-import { Card, CardContent, Typography } from '@mui/material';
+// src/components/ProductCard.tsx
+import { Card, CardContent, CardMedia, Typography, Button, CardActions, CardActionArea } from '@mui/material';
 import { useCart } from '../shopping/CartContext';
 
 interface Product {
@@ -11,38 +11,54 @@ interface Product {
 }
 
 const ProductCard = ({ product }: { product: Product }) => {
-  const { addToCart } = useCart();  // add to cart 
+  const { addToCart } = useCart();
 
-    const send = (product:Product)=>{
-        addToCart(product);
-    }
+  const handleAddToCart = () => {
+    addToCart(product);
+  };
+
   return (
     <Card
-      style={{
-        margin: '20px',
-        width: '250px',
-        display: 'inline-block',
-        border: '1px solid #ccc',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+      sx={{
+        width: 280,
+        margin: 2,
+        borderRadius: 3,
+        boxShadow: 3,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+        '&:hover': {
+          transform: 'scale(1.03)',
+          boxShadow: 6,
+        },
       }}
     >
-      <CardContent>
-        <Typography variant="h6">{product.name}</Typography>
-        <img
-          src={`http://localhost:3001/uploads/${product.image}`}
+      <CardActionArea>
+        <CardMedia
+          component="img"
+          height="160"
+          image={`http://localhost:3001/uploads/${product.image}`}
           alt={product.name}
-          style={{
-            width: '100%',
-            height: 'auto',
-            borderRadius: '8px',
-            marginTop: '10px',
-          }}
+          sx={{ objectFit: 'cover' }}
         />
-        <Typography variant="body2">Price: ${product.price}</Typography>
-        <Typography variant="body2">Description: {product.description}</Typography>
-        <button style={{backgroundColor:'green'}} onClick={() => send(product)}>Add to cart</button>
-      </CardContent>
+        <CardContent>
+          <Typography variant="h6" fontWeight={600} gutterBottom>
+            {product.name}
+          </Typography>
+          <Typography variant="body1" color="text.primary">
+            ₹{product.price.toFixed(2)}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" mt={1}>
+            {product.description}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+      <CardActions sx={{ justifyContent: 'center', pb: 2 }}>
+        <Button variant="contained" color="success" onClick={handleAddToCart}>
+          Add to Cart
+        </Button>
+      </CardActions>
     </Card>
   );
 };

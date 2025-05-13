@@ -8,7 +8,7 @@ import CreateCategory from './products/CreateCategory';
 import CreateProduct from './products/CreateProduct';
 import { CartProvider } from './shopping/CartContext';
 import AddToCart from './shopping/AddToCart';
-import Sucess from './shopping/Sucess';
+import Success from './shopping/Success';
 import Cancel from './shopping/Cancel';
 import Headers from './components/header'
 import toast, { Toaster } from 'react-hot-toast';
@@ -26,7 +26,7 @@ const App = () => {
 
             <Route path="/products" element={<CategoryAndProductScreen />} />
             <Route path="/AddToCart" element={<AddToCart />} />
-            <Route path="/success" element={<Sucess />} />
+            <Route path="/success" element={<Success />} />
             <Route path="/cancel" element={<Cancel />} />
           </Routes>
             <Toaster />

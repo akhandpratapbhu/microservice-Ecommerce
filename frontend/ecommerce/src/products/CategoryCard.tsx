@@ -1,10 +1,10 @@
-// src/components/CategoryCard.js
+// src/components/CategoryCard.tsx
 import React from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Card, CardContent, CardActionArea, Typography } from '@mui/material';
 
 interface CategoryCardProps {
   category: {
-    id: string;
+    _id: string;
     name: string;
     image: string;
   };
@@ -14,36 +14,37 @@ interface CategoryCardProps {
 const CategoryCard: React.FC<CategoryCardProps> = ({ category, onClick }) => {
   return (
     <Card
-      onClick={() => onClick(category.id)}
-      style={{
-        margin: '20px',
-        cursor: 'pointer',
-        width: '400px',
-        height: '300px',
+      sx={{
+        margin: 2,
+        width: 350,
+        height: 300,
+        borderRadius: 3,
+        boxShadow: 3,
         overflow: 'hidden',
-        textAlign: 'center',
-        display: 'inline-block',
-        border: '1px solid #ccc',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+        transition: 'transform 0.2s, box-shadow 0.2s',
+        '&:hover': {
+          transform: 'scale(1.03)',
+          boxShadow: 6,
+        },
       }}
+      onClick={() => onClick(category._id)}
     >
-      <CardContent>
-        <>
-        <Typography variant="h6">{category.name}</Typography>
-       <img
-  src={`http://localhost:3001/uploads/${category.image}`}
-  alt={category.name}
-  style={{
-    width: '100%',
-    height: 'auto',
-    borderRadius: '8px',
-    marginTop: '10px',
-  }}
-/>
-
-          </>         
-      </CardContent>
+      <CardActionArea sx={{ height: '100%' }}>
+        <img
+          src={`http://localhost:3001/uploads/${category.image}`}
+          alt={category.name}
+          style={{
+            width: '100%',
+            height: '180px',
+            objectFit: 'cover',
+          }}
+        />
+        <CardContent sx={{ textAlign: 'center' }}>
+          <Typography variant="h6" component="div" fontWeight={600}>
+            {category.name}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
     </Card>
   );
 };

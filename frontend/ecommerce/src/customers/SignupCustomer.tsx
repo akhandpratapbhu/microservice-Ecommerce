@@ -27,7 +27,7 @@ const SignupCustomer = () => {
 
   return (
   <div className="container d-flex justify-content-center align-items-center min-vh-100  text-white">
-  <div className="card p-4 shadow" style={{ maxWidth: '400px', width: '100%', backgroundColor: 'grey', border: 'none', borderRadius: '12px' }}>
+  <div className="card p-4 shadow" style={{ maxWidth: '400px', width: '100%', backgroundColor: 'rgb(229 235 241 / 8%)', border: 'none', borderRadius: '12px' }}>
     <h3 className="text-center mb-4"><i className="fa fa-user-plus me-2"></i>Sign Up</h3>
 
     {message && <div className="alert alert-success text-center p-2">{message}</div>}
@@ -40,7 +40,7 @@ const SignupCustomer = () => {
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className={`form-control bg-dark text-white border-secondary ${formData.name ? 'is-valid' : 'is-invalid'}`}
+          className={`form-control bg-white text-white border-secondary ${formData.name ? 'is-valid' : 'is-invalid'}`}
           required
         />
       </div>
@@ -52,7 +52,7 @@ const SignupCustomer = () => {
           name="email"
           value={formData.email}
           onChange={handleChange}
-          className={`form-control bg-dark text-white border-secondary ${formData.email ? 'is-valid' : 'is-invalid'}`}
+          className={`form-control bg-white text-white border-secondary ${formData.email ? 'is-valid' : 'is-invalid'}`}
           required
         />
       </div>
@@ -64,7 +64,7 @@ const SignupCustomer = () => {
           name="password"
           value={formData.password}
           onChange={handleChange}
-          className={`form-control bg-dark text-white border-secondary ${formData.password ? 'is-valid' : 'is-invalid'}`}
+          className={`form-control bg-white text-white border-secondary ${formData.password ? 'is-valid' : 'is-invalid'}`}
           required
         />
       </div>
