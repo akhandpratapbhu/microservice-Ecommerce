@@ -1,92 +1,117 @@
-// src/components/CategoryForm.js
-import React, { useState } from 'react';
 import axios from 'axios';
-
-const CreateCategory = () => {
+import React, { useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
+const AddCategory: React.FC = () => {
   const [name, setName] = useState('');
   const [image, setImage] = useState<File | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string>('');
+  const [error, setError] = useState('');
+  const [darkMode, setDarkMode] = useState(true);
 
- const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
 
-  if (!name || !image) {
-    setError('Both category name and image are required');
-    return;
-  }
+  const handleSubmit = async(e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
 
-  const formData = new FormData();
-  formData.append('name', name);
-  formData.append('image', image);
+    if (!name.trim()) {
+      setError('Category name is required');
+      return;
+    }
+    if (!image) {
+      setError('Image is required');
+      return;
+    }
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('image', image);
 
-  try {
-    const response = await axios.post(
-      'http://localhost:8000/products/categories',
-      formData );
-    console.log('Category added:', response.data);
-    setName('');
-    setImage(null);
-    setError(null);
-  } catch (err) {
-    console.error('Error adding category:', err);
-    setError('Failed to add category');
-  }
-};
+    try {
+      const response = await axios.post(
+        'http://localhost:8000/products/categories',
+        formData);
+      console.log('Category added:', response.data);
+      toast.success('Category added successfully!');
+      setName('');
+      setImage(null);
+      setPreview('');
+    } catch (err) {
+      console.error('Error adding category:', err);
+      setError('Failed to add category');
+    }
 
+  };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
-      <h2>Add Category</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '10px' }}>
-          <label htmlFor="category-name" style={{ display: 'block' }}>
-            Category Name
-          </label>
-          <input
-            type="text"
-            id="category-name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter category name"
-            required
-            style={{
-              width: '100%',
-              padding: '8px',
-              borderRadius: '4px',
-              border: '1px solid #ccc',
-            }}
-          />
+    <div className={`min-vh-100 py-5 ${darkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
+      {/* <Toaster position="top-right" /> */}
+      <div className="container">
+        <div className="d-flex justify-content-end mb-3">
+          <button
+            className="btn btn-outline-secondary"
+            onClick={() => setDarkMode(!darkMode)}
+          >
+            <i className={`bi ${darkMode ? 'bi-sun' : 'bi-moon'} me-2`}></i>
+            {darkMode ? 'Light Mode' : 'Dark Mode'}
+          </button>
         </div>
-  <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) {
-            setImage(file);
-          }
-        }}
-      />
 
+        <div className={`card shadow p-4 mx-auto ${darkMode ? 'bg-secondary text-white' : 'bg-white'}`} style={{ maxWidth: '500px', borderRadius: '12px' }}>
+          <h3 className="text-center mb-4">
+            <i className="bi bi-folder-plus me-2"></i>Add Category
+          </h3>
 
-        <button
-          type="submit"
-          style={{
-            width: '100%',
-            padding: '10px',
-            backgroundColor: '#4CAF50',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
-          Add Category
-        </button>
-      </form>
+          {error && <div className="alert alert-danger">{error}</div>}
+
+          <form onSubmit={handleSubmit}>
+            <div className="mb-3">
+              <label htmlFor="category-name" className="form-label">
+                <i className="bi bi-tag me-2"></i>Category Name
+              </label>
+              <input
+                type="text"
+                id="category-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className={`form-control ${darkMode ? 'bg-dark text-white border-secondary' : ''}`}
+                placeholder="Enter category name"
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="category-image" className="form-label">
+                <i className="bi bi-image me-2"></i>Category Image
+              </label>
+              <input
+                type="file"
+                id="category-image"
+                accept="image/*"
+                onChange={handleImageChange}
+                className={`form-control ${darkMode ? 'bg-dark text-white border-secondary' : ''}`}
+              />
+            </div>
+
+            {preview && (
+              <div className="mb-3 text-center">
+                <img src={preview} alt="Preview" className="img-thumbnail" style={{ maxHeight: '200px' }} />
+              </div>
+            )}
+
+            <button type="submit" className="btn btn-success w-100">
+              <i className="bi bi-plus-circle me-2"></i>Add Category
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default CreateCategory;
+export default AddCategory;

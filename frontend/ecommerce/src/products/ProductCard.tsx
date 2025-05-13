@@ -1,10 +1,9 @@
 // src/components/ProductCard.js
-import React from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
 import { useCart } from '../shopping/CartContext';
 
 interface Product {
-  id: string;
+  _id: string;
   name: string;
   image: string;
   price: number;
@@ -12,7 +11,11 @@ interface Product {
 }
 
 const ProductCard = ({ product }: { product: Product }) => {
-  const { addToCart } = useCart();
+  const { addToCart } = useCart();  // add to cart 
+
+    const send = (product:Product)=>{
+        addToCart(product);
+    }
   return (
     <Card
       style={{
@@ -38,7 +41,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         />
         <Typography variant="body2">Price: ${product.price}</Typography>
         <Typography variant="body2">Description: {product.description}</Typography>
-        <button style={{backgroundColor:'green'}} onClick={() => addToCart(product)}>Add to cart</button>
+        <button style={{backgroundColor:'green'}} onClick={() => send(product)}>Add to cart</button>
       </CardContent>
     </Card>
   );

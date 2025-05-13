@@ -4,29 +4,42 @@ import { NavLink } from 'react-router-dom';
 import { useCart } from '../shopping/CartContext';
 
 const Headers = () => {
-
- const { cart } = useCart();
-    console.log("cart", cart);
+    const { cart } = useCart();
 
     return (
-        <>
-            <Navbar style={{ height: "60px", background: "black", color: "white" }}>
-                <Container>
-                <NavLink to="/" className="text-decoration-none text-light mx-2">
-                    <h3 className='text-light'>Ecommerce</h3>
-                </NavLink>
-                    <NavLink to="/cart" className="text-decoration-none text-light mx-2">
-                    <div id='ex4'>
-                        <span className='p1 fa-stack fa-2x has-badge' data-count={cart.length}>
-                            <i className="fa-solid fa-cart-shopping"></i>
-                        </span>
-                    </div>
+        <Navbar style={{ height: "60px", background: "black", color: "white" }}>
+            <Container className="d-flex justify-content-between align-items-center">
+                <div className=" align-items-center gap-4">
+                    <NavLink to="/" className="text-decoration-none text-light">
+                        Ecommerce
                     </NavLink>
-                   
-                </Container>
-            </Navbar>
-        </>
-    )
-}
 
-export default Headers
+                </div>
+                <div className="d-flex align-items-center gap-4">
+                    <NavLink to="/create-products" className="text-decoration-none text-light">
+                        Create Product
+                    </NavLink>
+                    <NavLink to="/create-category" className="text-decoration-none text-light">
+                        Create Category
+                    </NavLink>
+                    <NavLink to="/products" className="text-decoration-none text-light">
+                        Products
+                    </NavLink>
+                    <NavLink to="/AddToCart" className="text-decoration-none text-light position-relative">
+                        <i className="fa-solid fa-cart-shopping fa-lg"></i>
+                        {cart.length > 0 && (
+                            <span
+                                className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style={{ fontSize: "0.6rem" }}
+                            >
+                                {cart.length}
+                            </span>
+                        )}
+                    </NavLink>
+                </div>
+            </Container>
+        </Navbar>
+    );
+};
+
+export default Headers;

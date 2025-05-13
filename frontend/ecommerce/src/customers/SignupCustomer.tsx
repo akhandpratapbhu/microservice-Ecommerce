@@ -26,43 +26,56 @@ const SignupCustomer = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: 'auto' }}>
-      <h2>SignUp Customer</h2>
-      {message && <p>{message}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name:</label><br />
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Email:</label><br />
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
-         <div>
-          <label>Password:</label><br />
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <button type="submit" style={{ marginTop: '10px' }}>Sign Up Customer</button>
-      </form>
-    </div>
+  <div className="container d-flex justify-content-center align-items-center min-vh-100  text-white">
+  <div className="card p-4 shadow" style={{ maxWidth: '400px', width: '100%', backgroundColor: 'grey', border: 'none', borderRadius: '12px' }}>
+    <h3 className="text-center mb-4"><i className="fa fa-user-plus me-2"></i>Sign Up</h3>
+
+    {message && <div className="alert alert-success text-center p-2">{message}</div>}
+
+    <form onSubmit={handleSubmit} noValidate>
+      <div className="mb-3">
+        <label className="form-label"><i className="fa fa-user me-2"></i>Name</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          className={`form-control bg-dark text-white border-secondary ${formData.name ? 'is-valid' : 'is-invalid'}`}
+          required
+        />
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label"><i className="fa fa-envelope me-2"></i>Email</label>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          className={`form-control bg-dark text-white border-secondary ${formData.email ? 'is-valid' : 'is-invalid'}`}
+          required
+        />
+      </div>
+
+      <div className="mb-3">
+        <label className="form-label"><i className="fa fa-lock me-2"></i>Password</label>
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          className={`form-control bg-dark text-white border-secondary ${formData.password ? 'is-valid' : 'is-invalid'}`}
+          required
+        />
+      </div>
+
+      <button type="submit" className="btn btn-primary w-100">
+        <i className="fa fa-paper-plane me-2"></i>Sign Up
+      </button>
+    </form>
+  </div>
+</div>
+
   );
 };
 

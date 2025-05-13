@@ -12,7 +12,7 @@ app.use(express.json()); // Safe to use, as multer handles form-data separately
 app.use('/uploads', express.static('uploads')); // Serve uploaded files
 
 // DB Connection
-mongoose.connect('mongodb://localhost:27017/productdb', {
+mongoose.connect('mongodb://localhost:27017/product', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -28,9 +28,10 @@ const Category = mongoose.model('Category', CategorySchema);
 // Product Schema and Model
 const ProductSchema = new mongoose.Schema({
   name: String,
-  image:String,
+  image: String,
   price: Number,
   description: String,
+  qnty: String,
   category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
 });
 
@@ -65,16 +66,16 @@ app.post('/categories', upload.single('image'), async (req, res) => {
     await category.save();
     res.json(category);
   } catch (error) {
-  console.error('Failed to add category:', error.message); // Log message only
-  console.error(error); // Log full error object
-  res.status(500).json({ message: 'Failed to add category', error: error.message });
-}
+    console.error('Failed to add category:', error.message); // Log message only
+    console.error(error); // Log full error object
+    res.status(500).json({ message: 'Failed to add category', error: error.message });
+  }
 });
 
 // Add a product
-app.post('/products',upload.single('image'), async (req, res) => {
+app.post('/products', upload.single('image'), async (req, res) => {
   try {
-    const { name, price, description, categoryId } = req.body;
+    const { name, price, description, qnty, categoryId } = req.body;
     const image = req.file?.filename;
     const category = await Category.findById(categoryId);
     if (!category) {
@@ -86,6 +87,7 @@ app.post('/products',upload.single('image'), async (req, res) => {
       image,
       price,
       description,
+      qnty,
       category: category._id,
     });
 
