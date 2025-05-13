@@ -8,9 +8,12 @@ import CreateProduct from './products/CreateProduct';
 import { CartProvider } from './shopping/CartContext';
 import AddToCart from './shopping/AddToCart';
 import PaymentPage from './shopping/payments';
+import Headers from './components/header';
 const App = () => {
   return (
     <CartProvider>
+          <>
+          <Headers />
     <Router>
       <div style={{ padding: '20px' }}>
         {/* Optional Navigation Links */}
@@ -32,6 +35,7 @@ const App = () => {
         </Routes>
       </div>
     </Router>
+    </>
     </CartProvider>
   );
 };

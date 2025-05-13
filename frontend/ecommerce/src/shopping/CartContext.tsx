@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-
+import toast from 'react-hot-toast';
 export interface Product {
   id: string;
   name: string;
@@ -18,7 +18,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const useCart = () => {
   const context = useContext(CartContext);
   console.log(context);
-  
+    toast.success("Item added In Your Cart")
   if (!context) {
     throw new Error('useCart must be used within a CartProvider');
   }
