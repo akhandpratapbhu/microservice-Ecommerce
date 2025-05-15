@@ -33,7 +33,7 @@ app.use(
 
 app.use(
   "/shopping",
-  proxy("http://localhost:3003", {
+  proxy("http://localhost:4242", {
     proxyReqPathResolver: (req) => {
       return req.originalUrl.replace("/shopping", "");
     },

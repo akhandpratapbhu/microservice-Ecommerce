@@ -1,13 +1,14 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
+import { useTheme } from '../context-provider/themecontext';
 const AddCategory: React.FC = () => {
   const [name, setName] = useState('');
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
   const [error, setError] = useState('');
-  const [darkMode, setDarkMode] = useState(true);
-
+  //const [darkMode, setDarkMode] = useState(true);
+ const { darkMode } = useTheme();
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -52,7 +53,7 @@ const AddCategory: React.FC = () => {
     <div className={`min-vh-100 py-5 ${darkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
       {/* <Toaster position="top-right" /> */}
       <div className="container">
-        <div className="d-flex justify-content-end mb-3">
+        {/* <div className="d-flex justify-content-end mb-3">
           <button
             className="btn btn-outline-secondary"
             onClick={() => setDarkMode(!darkMode)}
@@ -60,7 +61,7 @@ const AddCategory: React.FC = () => {
             <i className={`bi ${darkMode ? 'bi-sun' : 'bi-moon'} me-2`}></i>
             {darkMode ? 'Light Mode' : 'Dark Mode'}
           </button>
-        </div>
+        </div> */}
 
         <div className={`card shadow p-4 mx-auto ${darkMode ? 'bg-secondary text-white' : 'bg-white'}`} style={{ maxWidth: '500px', borderRadius: '12px' }}>
           <h3 className="text-center mb-4">

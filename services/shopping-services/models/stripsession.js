@@ -13,6 +13,7 @@ const StripeSessionSchema = new mongoose.Schema({
   successUrl: String,
   cancelUrl: String,
   checkoutUrl: String,
+  paymentId:String,
   products: [Object], // Save original cart products if needed
 }, { timestamps: true });
 

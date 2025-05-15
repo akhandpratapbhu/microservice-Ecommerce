@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
+import { useTheme } from '../context-provider/themecontext';
 
 
 interface Category {
@@ -17,7 +18,8 @@ const CreateProduct: React.FC = () => {
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>('');
   const [qnty, setQnty] = useState('0');
-  const [darkMode, setDarkMode] = useState(true);
+ // const [darkMode, setDarkMode] = useState(true);
+ const { darkMode } = useTheme();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -76,12 +78,12 @@ const CreateProduct: React.FC = () => {
     <div className={`min-vh-100 py-5 ${darkMode ? 'bg-dark text-white' : 'bg-light text-dark'}`}>
       {/* <Toaster position="top-right" /> */}
       <div className="container">
-        <div className="d-flex justify-content-end mb-3">
+        {/* <div className="d-flex justify-content-end mb-3">
           <button className="btn btn-outline-secondary" onClick={() => setDarkMode(!darkMode)}>
             <i className={`bi ${darkMode ? 'bi-sun' : 'bi-moon'} me-2`}></i>
             {darkMode ? 'Light Mode' : 'Dark Mode'}
           </button>
-        </div>
+        </div> */}
 
         <div className={`card p-4 mx-auto shadow ${darkMode ? 'bg-secondary text-white' : 'bg-white'}`} style={{ maxWidth: '600px', borderRadius: '12px' }}>
           <h3 className="text-center mb-4">

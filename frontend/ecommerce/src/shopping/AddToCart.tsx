@@ -1,12 +1,13 @@
 import toast from 'react-hot-toast';
-import { useCart, type Product } from '../shopping/CartContext';
+import { useCart, type Product } from '../context-provider/CartContext';
 import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
+import { useTheme } from '../context-provider/themecontext';
 
 const AddToCart = () => {
-
+    const { darkMode } = useTheme();
     const { cart, addToCart, removeFromCart, removeSingleItem, emptyCart } = useCart();
-console.log("cart",cart);
+    console.log("cart", cart);
 
     const handleIncrement = (product: Product) => {
         addToCart(product);
@@ -66,16 +67,16 @@ console.log("cart",cart);
         const headers = {
             "Content-Type": "application/json"
         }
-        console.log("sessionbefore", );
+        console.log("sessionbefore",);
 
-        const response = await fetch("http://localhost:3003/api/create-checkout-session", {
+        const response = await fetch("http://localhost:4242/api/create-checkout-session", {
             method: "POST",
             headers: headers,
             body: JSON.stringify(body)
         });
 
-         const session = await response.json();
-console.log("session", session);
+        const session = await response.json();
+        console.log("session", session);
 
         if (!stripe) {
             console.error("Stripe failed to load.");
@@ -94,102 +95,146 @@ console.log("session", session);
     return (
 
         <>
-            <div className='row justify-content-center m-0'>
-                <div className='col-md-8 mt-5 mb-5 cardsdetails'>
-                    <div className="card">
-                        <div className="card-header bg-dark p-3">
-                            <div className='card-header-flex d-flex justify-content-between align-items-center'>
-                                <h5 className='text-white m-0'>Cart Calculation{cart.length > 0 ? `(${cart.length})` : ""}</h5>
-                                {
-                                    cart.length > 0 ? <button className='btn btn-danger mt-0 btn-sm'
-                                        onClick={emptycart}
-                                    ><i className='fa fa-trash-alt mr-2'></i><span>EmptyCart</span></button>
-                                        : ""
-                                }
+            <div
+                className={` fluied-container row justify-content-center m-0  min-vh-100 ${darkMode ? 'text-white' : 'text-dark'}`}
+                style={{
+                    backgroundColor: darkMode ? '#121212' : '#f0f0f0',
+                }}
+            >
+                <div className="col-md-8 mt-5 mb-5 cardsdetails">
+                    <div
+                        className={`card ${darkMode ? 'text-white' : 'text-dark'}`}
+                        style={{
+                            backgroundColor: darkMode ? '#1e1e1e' : '#fff',
+                        }}
+                    >
+                        {/* Card Header */}
+                        <div
+                            className={`card-header p-3 ${darkMode ? 'text-white' : 'text-dark'}`}
+                            style={{
+                                backgroundColor: darkMode ? '#2c2c2c' : '#f0f0f0',
+                            }}
+                        >
+                            <div className="card-header-flex d-flex justify-content-between align-items-center">
+                                <h5 className="m-0">Cart Calculation {cart.length > 0 ? `(${cart.length})` : ""}</h5>
+                                {cart.length > 0 && (
+                                    <button className="btn btn-danger btn-sm" onClick={emptycart}>
+                                        <i className="fa fa-trash-alt mr-2"></i>Empty Cart
+                                    </button>
+                                )}
                             </div>
-
                         </div>
-                        <div className="card-body p-0">
-                            {
-                                cart.length === 0 ? <table className='table cart-table mb-0'>
+
+                        {/* Card Body */}
+                        <div
+                            className={`card-body p-0 ${darkMode ? 'text-white' : 'text-dark'}`}
+                            style={{
+                                backgroundColor: darkMode ? '#121212' : '#f0f0f0',
+                            }}
+                        >
+                            {cart.length === 0 ? (
+                                <table className="table cart-table mb-0">
                                     <tbody>
                                         <tr>
                                             <td colSpan={6}>
-                                                <div className='cart-empty'>
-                                                    <i className='fa fa-shopping-cart'></i>
+                                                <div className="cart-empty text-center py-4">
+                                                    <i className="fa fa-shopping-cart fa-2x mb-2"></i>
                                                     <p>Your Cart Is Empty</p>
                                                 </div>
                                             </td>
                                         </tr>
                                     </tbody>
-                                </table> :
-                                    <table className='table cart-table mb-0 table-responsive-sm'>
-                                        <thead>
-                                            <tr>
-                                                <th>Action</th>
-                                                <th>Product</th>
-                                                <th>Name</th>
-                                                <th>Price</th>
-                                                <th>Qty</th>
-                                                <th className='text-right'> <span id="amount" className='amount'>Total Amount</span></th>
+                                </table>
+                            ) : (
+                                <table className="table cart-table mb-0 table-responsive-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Action</th>
+                                            <th>Product</th>
+                                            <th>Name</th>
+                                            <th>Price</th>
+                                            <th>Qty</th>
+                                            <th className="text-right">Total Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {cart.map((data) => (
+                                            <tr key={data._id}>
+                                                <td>
+                                                    <button className="prdct-delete" onClick={() => handleDecrement(data)}>
+                                                        <i className="fa fa-trash-alt"></i>
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <div className="product-img">
+                                                        <img
+                                                            src={`http://localhost:3001/uploads/${data.image}`}
+                                                            alt={data.name}
+                                                            style={{
+                                                                width: '60px',
+                                                                height: 'auto',
+                                                                borderRadius: '8px',
+                                                                marginLeft: '20px',
+                                                            }}
+                                                        />
+                                                    </div>
+                                                </td>
+                                                <td>{data.name}</td>
+                                                <td>₹ {data.price}</td>
+                                                <td>
+                                                    <div className="prdct-qty-container">
+                                                        <button
+                                                            className="prdct-qty-btn"
+                                                            onClick={
+                                                                Number(data.qnty) <= 1
+                                                                    ? () => handleDecrement(data)
+                                                                    : () => handleSingleDecrement(data)
+                                                            }
+                                                        >
+                                                            <i className="fa fa-minus"></i>
+                                                        </button>
+                                                        <input
+                                                            type="text"
+                                                            className="qty-input-box"
+                                                            value={data.qnty}
+                                                            disabled
+                                                        />
+                                                        <button
+                                                            className="prdct-qty-btn"
+                                                            onClick={() => handleIncrement(data)}
+                                                        >
+                                                            <i className="fa fa-plus"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                <td className="text-right">₹ {Number(data.qnty) * data.price}</td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            {
-                                                cart.map((data, index) => {
-                                                    return (
-                                                        <>
-                                                            <tr>
-                                                                <td>
-                                                                    <button className='prdct-delete'
-                                                                        onClick={() => handleDecrement(data)}
-                                                                    ><i className='fa fa-trash-alt'></i></button>
-                                                                </td>
-                                                                <td><div className='product-img'><img src={`http://localhost:3001/uploads/${data.image}`}
-                                                                    alt={data.name}
-                                                                    style={{
-                                                                        width: '60px',
-                                                                        height: 'auto',
-                                                                        borderRadius: '8px',
-                                                                        marginLeft: '20px',
-                                                                    }} /></div></td>
-                                                                <td><div className='product-name'><p>{data.name}</p></div></td>
-                                                                <td>{data.price}</td>
-                                                                <td>
-                                                                    <div className="prdct-qty-container">
-                                                                        <button className='prdct-qty-btn' type='button'
-                                                                            onClick={Number(data.qnty) <= 1 ? () => handleDecrement(data) : () => handleSingleDecrement(data)}
-                                                                        >
-                                                                            <i className='fa fa-minus'></i>
-                                                                        </button>
-                                                                        <input type="text" className='qty-input-box' value={data.qnty} disabled name="" id="" />
-                                                                        <button className='prdct-qty-btn' type='button' onClick={() => handleIncrement(data)}>
-                                                                            <i className='fa fa-plus'></i>
-                                                                        </button>
-                                                                    </div>
-                                                                </td>
-                                                                <td className='text-right'>₹ {Number(data.qnty) * data.price}</td>
-                                                            </tr>
-                                                        </>
-                                                    )
-                                                })
-                                            }
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th>&nbsp;</th>
-                                                <th colSpan={2}>&nbsp;</th>
-                                                <th>Items In Cart <span className='ml-2 mr-2'>:</span><span className='text-danger'>{totalquantity}</span></th>
-                                                <th className='text-right'>Total Price<span className='ml-2 mr-2'>:</span><span className='text-danger'>₹ {totalprice}</span></th>
-                                                <th className='text-right'><button className='btn btn-success' onClick={makePayment} type='button'>Checkout</button></th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                            }
+                                        ))}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>&nbsp;</th>
+                                            <th colSpan={2}>&nbsp;</th>
+                                            <th>
+                                                Items In Cart <span className="text-danger">{totalquantity}</span>
+                                            </th>
+                                            <th className="text-right">
+                                                Total Price <span className="text-danger">₹ {totalprice}</span>
+                                            </th>
+                                            <th className="text-right">
+                                                <button className="btn btn-success" onClick={makePayment}>
+                                                    Checkout
+                                                </button>
+                                            </th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
+
         </>
     );
 };
