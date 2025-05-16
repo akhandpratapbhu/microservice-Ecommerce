@@ -1,5 +1,7 @@
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import SignupCustomer from './customers/SignupCustomer';
@@ -13,13 +15,21 @@ import Headers from './components/header'
 import toast, { Toaster } from 'react-hot-toast';
 import { ContextProvider } from './context-provider/contextProvider';
 import CategorywiseProduct from './products/categoryWiseProductList';
+import LanguageSwitcher from './components/languageSwitcher';
 const App = () => {
+
+   const { i18n } = useTranslation();
+
+  useEffect(() => {
+    document.documentElement.dir = i18n.language === 'ar' ? 'ltr' : 'ltr';
+  }, [i18n.language]);
   return (
  <ContextProvider>
       <>
    
         <Router>
                <Headers />
+                <LanguageSwitcher />
           <Routes>
             <Route path="/" element={<SignupCustomer />} />
             <Route path="/create-category" element={<CreateCategory />} />

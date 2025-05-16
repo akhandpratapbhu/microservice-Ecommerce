@@ -2,11 +2,15 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import { NavLink } from 'react-router-dom';
 import { useCart } from '../context-provider/CartContext';
-import { useTheme } from '../context-provider/themecontext'; //  Import theme context
+import { useTheme } from '../context-provider/themecontext';
+import { useTranslation } from 'react-i18next'; // Import translation hook
 
 const Headers = () => {
     const { cart } = useCart();
-    const { darkMode, toggleDarkMode } = useTheme(); // Get dark mode values
+    const { darkMode, toggleDarkMode } = useTheme();
+     const { t } = useTranslation('navbar');
+
+
 
     return (
         <Navbar
@@ -22,33 +26,21 @@ const Headers = () => {
                         to="/"
                         className={`text-decoration-none ${darkMode ? 'text-light' : 'text-dark'}`}
                     >
-                        Ecommerce
+                        {t('ecommerce')}
                     </NavLink>
                 </div>
 
                 <div className="d-flex align-items-center gap-4">
-                    <NavLink
-                        to="/create-products"
-                        className={`text-decoration-none ${darkMode ? 'text-light' : 'text-dark'}`}
-                    >
-                        Create Product
+                    <NavLink to="/create-products" className={`text-decoration-none ${darkMode ? 'text-light' : 'text-dark'}`}>
+                        {t('createProduct')}
                     </NavLink>
-                    <NavLink
-                        to="/create-category"
-                        className={`text-decoration-none ${darkMode ? 'text-light' : 'text-dark'}`}
-                    >
-                        Create Category
+                    <NavLink to="/create-category" className={`text-decoration-none ${darkMode ? 'text-light' : 'text-dark'}`}>
+                        {t('createCategory')}
                     </NavLink>
-                    <NavLink
-                        to="/products"
-                        className={`text-decoration-none ${darkMode ? 'text-light' : 'text-dark'}`}
-                    >
-                        Products
+                    <NavLink to="/products" className={`text-decoration-none ${darkMode ? 'text-light' : 'text-dark'}`}>
+                        {t('products')}
                     </NavLink>
-                    <NavLink
-                        to="/AddToCart"
-                        className={`text-decoration-none position-relative ${darkMode ? 'text-light' : 'text-dark'}`}
-                    >
+                    <NavLink to="/AddToCart" className={`text-decoration-none position-relative ${darkMode ? 'text-light' : 'text-dark'}`}>
                         <i className="fa-solid fa-cart-shopping fa-lg"></i>
                         {cart.length > 0 && (
                             <span
@@ -60,14 +52,14 @@ const Headers = () => {
                         )}
                     </NavLink>
 
-                    {/* Theme toggle button */}
                     <button
                         onClick={toggleDarkMode}
                         className={`btn btn-sm ${darkMode ? 'btn-light' : 'btn-dark'}`}
                     >
                         <i className={`bi ${darkMode ? 'bi-sun' : 'bi-moon'} me-2`}></i>
-                        {darkMode ? 'Light Mode' : 'Dark Mode'}
+                        {darkMode ? t('lightMode') : t('darkMode')}
                     </button>
+
                 </div>
             </Container>
         </Navbar>

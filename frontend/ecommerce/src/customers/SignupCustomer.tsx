@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useTheme } from '../context-provider/themecontext';
+import { useTranslation } from 'react-i18next';
 
 const SignupCustomer = () => {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
  const { darkMode } = useTheme();
+ const { t } = useTranslation('signup');
 
   const handleChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
@@ -49,7 +51,7 @@ const SignupCustomer = () => {
         }}
       >
         <h3 className="text-center mb-4">
-          <i className="fa fa-user-plus me-2"></i>Sign Up
+          <i className="fa fa-user-plus me-2"></i>{t('signup')}
         </h3>
 
         {message && (
@@ -59,7 +61,7 @@ const SignupCustomer = () => {
         <form onSubmit={handleSubmit} noValidate>
           <div className="mb-3">
             <label className="form-label">
-              <i className="fa fa-user me-2"></i>Name
+              <i className="fa fa-user me-2"></i>{t('name')}
             </label>
             <input
               type="text"
@@ -75,7 +77,7 @@ const SignupCustomer = () => {
 
           <div className="mb-3">
             <label className="form-label">
-              <i className="fa fa-envelope me-2"></i>Email
+              <i className="fa fa-envelope me-2"></i>{t('email')}
             </label>
             <input
               type="email"
@@ -91,7 +93,7 @@ const SignupCustomer = () => {
 
           <div className="mb-3">
             <label className="form-label">
-              <i className="fa fa-lock me-2"></i>Password
+              <i className="fa fa-lock me-2"></i>{t('password')}
             </label>
             <input
               type="password"
@@ -106,7 +108,7 @@ const SignupCustomer = () => {
           </div>
 
           <button type="submit" className="btn btn-primary w-100">
-            <i className="fa fa-paper-plane me-2"></i>Sign Up
+            <i className="fa fa-paper-plane me-2"></i>{t('signup')}
           </button>
         </form>
       </div>
