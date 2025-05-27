@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
-import { Box, CircularProgress, Divider, Grid, Typography } from "@mui/material";
+import { Box, CircularProgress, Grid, Typography } from "@mui/material";
 import { useTheme } from "../context-provider/themecontext";
 import { useLocation } from "react-router-dom";
 

@@ -11,11 +11,22 @@ app.use(cors());
 app.use(express.json()); // Safe to use, as multer handles form-data separately
 app.use('/uploads', express.static('uploads')); // Serve uploaded files
 
-// DB Connection
-mongoose.connect('mongodb://localhost:27017/product', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// DB Connection url -'mongodb://localhost:27017/product' for docker localhost to mongo
+// product-services/index.js or wherever you connect to MongoDB
+
+const connectWithRetry = () => {
+  mongoose.connect('mongodb://localhost:27017/product', { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+      console.log('MongoDB connected');
+    })
+    .catch((err) => {
+      console.error('Failed to connect to MongoDB. Retrying in 5s...', err);
+      setTimeout(connectWithRetry, 5000); // retry every 5 seconds
+    });
+};
+
+connectWithRetry();
+
 
 // Category Schema and Model
 const CategorySchema = new mongoose.Schema({

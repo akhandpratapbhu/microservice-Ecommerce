@@ -1,0 +1,67 @@
+
+
+services:
+  gateway:
+    build: ./gateway
+    ports:
+      - "8000:8000"  # This is the single entry point to your system
+    depends_on:
+      - product-services
+      - customer-services
+      - shopping-services
+    networks:
+      - app-network
+
+  product-services:
+    build: ./product-services
+    ports:
+      - "3001:3001"  # Optional, for debugging — not needed for global
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  customer-services:
+    build: ./customer-services
+    ports:
+      - "3002:3002"
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+  shopping-services:
+    build: ./shopping-services
+    ports:
+      - "4242:4242"
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  mongo:
+   image: mongo
+   ports:
+    - "27017:27017"
+   networks:
+    - app-network
+   healthcheck:
+    test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: Admin
+      POSTGRES_DB: customerdb
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { useTheme } from '../context-provider/themecontext';
 
 
@@ -58,7 +58,7 @@ const CreateProduct: React.FC = () => {
     formData.append('qnty', qnty);
 
     try {
-      const response = await axios.post('http://localhost:8000/products/products', formData);
+       await axios.post('http://localhost:8000/products/products', formData);
       toast.success('Product added successfully!');
       // Reset form
       setName('');

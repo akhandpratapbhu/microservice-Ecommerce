@@ -1,7 +1,7 @@
 // src/components/ProductCard.tsx
 import { Card, CardContent, CardMedia, Typography, Button, CardActions, CardActionArea } from '@mui/material';
 import { useCart } from '../context-provider/CartContext';
-import { useTheme } from '../context-provider/themecontext';
+//import { useTheme } from '../context-provider/themecontext';
 
 interface Product {
   _id: string;
@@ -13,7 +13,7 @@ interface Product {
 
 const ProductCard = ({ product }: { product: Product }) => {
   const { addToCart } = useCart();
-const { darkMode } = useTheme();
+//const { darkMode } = useTheme();
   const handleAddToCart = () => {
     addToCart(product);
   };

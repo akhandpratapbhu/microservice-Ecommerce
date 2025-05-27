@@ -12,24 +12,26 @@ import AddToCart from './shopping/AddToCart';
 import Success from './shopping/Success';
 import Cancel from './shopping/Cancel';
 import Headers from './components/header'
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import { ContextProvider } from './context-provider/contextProvider';
 import CategorywiseProduct from './products/categoryWiseProductList';
 import LanguageSwitcher from './components/languageSwitcher';
+import OrderTracking from './components/order/orderTracking';
+import Order from './components/order/order';
 const App = () => {
 
-   const { i18n } = useTranslation();
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     document.documentElement.dir = i18n.language === 'ar' ? 'ltr' : 'ltr';
   }, [i18n.language]);
   return (
- <ContextProvider>
+    <ContextProvider>
       <>
-   
+
         <Router>
-               <Headers />
-                <LanguageSwitcher />
+          <Headers />
+          <LanguageSwitcher />
           <Routes>
             <Route path="/" element={<SignupCustomer />} />
             <Route path="/create-category" element={<CreateCategory />} />
@@ -38,10 +40,12 @@ const App = () => {
             <Route path="/products" element={<CategoryAndProductScreen />} />
             <Route path="/category-products" element={<CategorywiseProduct />} />
             <Route path="/AddToCart" element={<AddToCart />} />
+            <Route path="/order" element={<Order />} />
+            <Route path="/orderTracking" element={<OrderTracking />} />
             <Route path="/success" element={<Success />} />
             <Route path="/cancel" element={<Cancel />} />
           </Routes>
-            <Toaster />
+          <Toaster />
         </Router>
 
       </>

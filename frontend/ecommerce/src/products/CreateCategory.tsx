@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { useTheme } from '../context-provider/themecontext';
 const AddCategory: React.FC = () => {
   const [name, setName] = useState('');

@@ -10,7 +10,9 @@ app.use((req, res, next) => {
   console.log(`[Gateway] ${req.method} ${req.originalUrl}`);
   next();
 });
-
+// ❌ WRONG inside Docker
+//http://localhost:3001/products/categories
+// ✅ CORRECT — use service name defined in docker-compose like-http://product-services:3001
 app.use(
   "/products",
   proxy("http://localhost:3001", {
