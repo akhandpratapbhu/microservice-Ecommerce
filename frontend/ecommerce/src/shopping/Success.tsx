@@ -1,5 +1,17 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Success = () => {
+
+   const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigate("/order"); // Change "/order" to your actual order page route
+    }, 30000); // 30 seconds
+
+    return () => clearTimeout(timer); // Cleanup in case the component unmounts early
+  }, [navigate]);
   return (
     <div style={styles.container}>
       <div style={styles.card}>

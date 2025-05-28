@@ -28,7 +28,7 @@ const AddToCart = () => {
 
     const [totalprice, setPrice] = useState(0);
     const [totalquantity, setTotalQuantity] = useState(0);
- const [products, setProducts] = useState<any[]>([]); 
+    const [products, setProducts] = useState<any[]>([]);
 
 
     // count total price
@@ -58,60 +58,66 @@ const AddToCart = () => {
         countquantity()
     }, [countquantity]);
 
-   useEffect(() => {
-  const saveCart = async () => {
-    if (cart && cart.length > 0) {
-      try {
-        const response = await fetch("http://localhost:4242/api/saveInCart", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ products: cart })
-        });
+    useEffect(() => {
+        const saveCart = async () => {
+            if (cart && cart.length > 0) {
+                try {
+                    const customer_id = 1;// ✅ Replace with actual logged-in customer ID
+                   // const totalQuantity = cart.reduce((sum, item) => sum + Number(item.qnty), 0);
+                  //  const totalPrice = cart.reduce((sum, item) => sum + item.price * Number(item.qnty), 0);
+                  //  console.log(totalQuantity,totalPrice);
+                    
+                    const response = await fetch("http://localhost:4242/api/saveInCart", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ products: cart, totalquantity, totalprice, customer_id })
+                    });
 
-        const result = await response.json();
-        console.log("Cart saved:", result.cartData.products);
+                    const result = await response.json();
+                    console.log("Cart saved:", result.cartData.products);
 
-      } catch (err) {
-        console.error("Error saving to cart:", err);
-      }
-    }
-  };
+                } catch (err) {
+                    console.error("Error saving to cart:", err);
+                }
+            }
+        };
 
-  saveCart(); // Call the async function
-}, [cart]);
+        saveCart(); // Call the async function
+    }, [cart]);
 
 
-useEffect(() => {
-  const FetchCart = async () => {
-   
-      try {
-        const response = await fetch("http://localhost:4242/api/fetchInCart", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json"
-          },
-        });
+    useEffect(() => {
+        const FetchCart = async () => {
 
-        const result = await response.json();
-        console.log("Cart saved:", result.existingCart.products);
-       setProducts(( result.existingCart.products));
+            try {
+                let customerId=1
+                const response = await fetch(`http://localhost:4242/api/fetchInCart/${customerId}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
 
-      } catch (err) {
-        console.error("Error saving to cart:", err);
-      }
-    }
-  
+                const result = await response.json();
+                console.log("Cart saved:", result.existingCart.products);
+                setProducts((result.existingCart.products));
 
-  FetchCart(); // Call the async function
-},[]);
-console.log("products",products,typeof(products));
+            } catch (err) {
+                console.error("Error saving to cart:", err);
+            }
+        }
+
+
+        FetchCart(); // Call the async function
+    }, []);
+    console.log("products", products, typeof (products));
     // payment integration
     const makePayment = async () => {
         const stripe = await loadStripe("pk_test_51RO0bOIkMm1UrW60QwzbLTs9PvVvMmw8CZhqg6kp1rxQmY62YQZiAaqcLprLLrbVgHT1zSQFa3OqJaHNkwxhQpO000rS6La0X1");//ENTER YOUR PUBLISHABLE KEY
         const body = {
-            products: cart
+            products: products
         }
         const headers = {
             "Content-Type": "application/json"
@@ -181,7 +187,7 @@ console.log("products",products,typeof(products));
                                 backgroundColor: darkMode ? '#121212' : '#f0f0f0',
                             }}
                         >
-                            {cart.length === -1 ? (
+                            {products.length === 0 ? (
                                 <table className="table cart-table mb-0">
                                     <tbody>
                                         <tr>
@@ -259,7 +265,7 @@ console.log("products",products,typeof(products));
                                                 <td className="text-right">₹ {Number(data.qnty) * data.price}</td>
                                             </tr>
                                         ))} */}
-                                         {products.map((data) => (
+                                        {products.map((data) => (
                                             <tr key={data._id}>
                                                 <td>
                                                     <button className="prdct-delete" onClick={() => handleDecrement(data)}>

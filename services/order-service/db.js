@@ -29,7 +29,7 @@ async function initDB() {
         order_id INT AUTO_INCREMENT PRIMARY KEY,
         customer_id INT NOT NULL,
         order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-        status ENUM('Placed', 'Processing', 'Shipped', 'Delivered', 'Cancelled') DEFAULT 'Placed',
+        status ENUM('Placed', 'Pending', 'Shipped','Out for Delivery', 'Delivered', 'Cancelled') DEFAULT 'Placed',
         total_amount DECIMAL(10, 2) NOT NULL,
         shipping_address TEXT,
         billing_address TEXT,
@@ -37,7 +37,6 @@ async function initDB() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       );
     `);
-
     await connection.execute(`
       CREATE TABLE IF NOT EXISTS order_items (
         item_id INT AUTO_INCREMENT PRIMARY KEY,

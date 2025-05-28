@@ -28,13 +28,13 @@ connectWithRetry();
 //save-in cart api
 app.post('/api/saveInCart', async (req, res) => {
   try {
-    const { products } = req.body;
+    const { products, totalprice, totalquantity, customer_id } = req.body;
 
     if (!products || !Array.isArray(products) || products.length === 0) {
       return res.status(400).json({ message: 'No products in cart' });
     }
 
-    let existingCart = await Cart.findOne();
+    let existingCart = await Cart.findOne({ customer_id }); // find by customer_id
 
     if (existingCart) {
       for (const newProduct of products) {
@@ -51,10 +51,20 @@ app.post('/api/saveInCart', async (req, res) => {
         }
       }
 
+      // ✅ Update total fields
+      existingCart.totalprice = totalprice;
+      existingCart.totalquantity = totalquantity;
+
       await existingCart.save();
       return res.status(200).json({ cartData: existingCart });
     } else {
-      const newCart = new Cart({ products });
+      // ✅ Save all fields on new cart
+      const newCart = new Cart({
+        products,
+        totalprice,
+        totalquantity,
+        customer_id
+      });
       await newCart.save();
       return res.status(201).json({ cartData: newCart });
     }
@@ -63,13 +73,31 @@ app.post('/api/saveInCart', async (req, res) => {
     res.status(500).json({ message: 'Failed to save cart' });
   }
 });
-app.get('/api/fetchInCart', async (req, res) => {
+
+app.get('/api/fetchInCart/:customerId', async (req, res) => {
   try {
-    let existingCart = await Cart.findOne();
-    res.status(200).json({existingCart:existingCart  });
-   } catch (error) {
+    const customer_id = parseInt(req.params.customerId, 10);
+    let existingCart = await Cart.findOne({ customer_id }); //  find by customer_id
+    res.status(200).json({ existingCart: existingCart });
+  } catch (error) {
     console.error('Error saving cart:', error);
     res.status(500).json({ message: 'Failed to save cart' });
+  }
+});
+// Delete cart by customer_id
+app.delete('/api/deleteCart/:customerId', async (req, res) => {
+  try {
+    const customerId = parseInt(req.params.customerId, 10);
+    const result = await Cart.deleteOne({ customer_id: customerId });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'Cart not found' });
+    }
+
+    res.status(200).json({ message: 'Cart deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting cart:', error);
+    res.status(500).json({ message: 'Failed to delete cart' });
   }
 });
 
@@ -78,6 +106,7 @@ app.get('/api/fetchInCart', async (req, res) => {
 app.post("/api/create-checkout-session", async (req, res) => {
   const { products } = req.body;
 
+console.log("products",products);
 
   const lineItems = products.map((product) => ({
     price_data: {

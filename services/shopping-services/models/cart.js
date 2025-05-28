@@ -15,6 +15,9 @@ const cartSchema = new mongoose.Schema({
         image: String
       }
     }
-  ]
+  ],
+  totalprice:Number,
+  totalquantity:Number,
+  customer_id:Number
 });
 module.exports = mongoose.model('Cart', cartSchema);

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './OrderTracking.css';
+import { useLocation } from 'react-router-dom';
 
 type OrderStatus = {
     status: string;
@@ -8,6 +9,7 @@ type OrderStatus = {
 
 const steps = [
     'Placed',
+    'Pending',
     'Shipped',
     'Out for Delivery',
     'Delivered',
@@ -17,63 +19,42 @@ const OrderTracking: React.FC = () => {
     const [orderId, setOrderId] = useState('');
     const [orderStatus, setOrderStatus] = useState<OrderStatus | null>(null);
     const [currentStep, setCurrentStep] = useState<number>(0);
+    const location = useLocation();
+    const selectedorderId = location.state?.order.order_id;
 
-    const isAdmin = true;
-    //   const getCurrentStep = () => {
-    //     return steps.findIndex(step => step === orderStatus?.status);
-    //   };
-    useEffect(()=>{
-        handleTrackOrder('1')
-    })
-    const handleTrackOrder = (orderId:string) => {
-        setOrderId(orderId)
-        const sampleData: OrderStatus = {
-            status: 'Out for Delivery',
-            estimatedDelivery: 'June 1, 2025',
-        };
-        setTimeout(() => {
-            setOrderStatus(sampleData);
-        }, 300);
-    };
+    useEffect(() => {
+        if (selectedorderId) {
+            setOrderId(selectedorderId);
+            fetchOrderStatus();
+        }
+    }, [selectedorderId]);
 
-    // const currentStep = getCurrentStep();
-    const updateStatus = async () => {
-        const nextStep = currentStep + 1;
-        const newStatus = steps[nextStep];
-console.log(nextStep,newStatus);
-
+    const fetchOrderStatus = async () => {
         try {
-            const response = await fetch(`/api/orders/${orderId}`, {
-                method: 'PATCH',
+            const response = await fetch(`http://localhost:3000/api/orders/${selectedorderId}`, {
+                method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: newStatus }),
             });
 
-            if (response.ok) {
-                setCurrentStep(nextStep);
+            const data = await response.json();
+            console.log("Fetched status:", data.status);
+
+            if (response.ok && data.status) {
+                const stepIndex = steps.findIndex(step => step === data.status);
+                setCurrentStep(stepIndex !== -1 ? stepIndex : 0);
                 setOrderStatus({
-                    status: newStatus,
+                    status: data.status,
                     estimatedDelivery: 'June 1, 2025',
                 });
             }
         } catch (error) {
-            console.error('Failed to update status', error);
+            console.error('Error fetching order status:', error);
         }
     };
 
     return (
         <div className="tracking-container">
-            <h2>Track Your Order</h2>
-            {/* <form onSubmit={handleTrackOrder}>
-                <input
-                    type="text"
-                    placeholder="Enter Order ID"
-                    value={orderId}
-                    onChange={(e) => setOrderId(e.target.value)}
-                    required
-                />
-                <button type="submit" disabled={!orderId}>Track</button>
-            </form> */}
+            <h2>Track Your Order (Order ID: {selectedorderId})</h2>
 
             {orderStatus && (
                 <div className="status-section">
@@ -83,8 +64,8 @@ console.log(nextStep,newStatus);
                         {steps.map((step, index) => (
                             <div key={step} className="step-wrapper">
                                 <div className={`step-circle 
-                    ${index < currentStep ? 'completed' : ''}
-                    ${index === currentStep ? 'current' : ''}`}>
+                                    ${index < currentStep ? 'completed' : ''}
+                                    ${index === currentStep ? 'current' : ''}`}>
                                 </div>
                                 {index < steps.length - 1 && (
                                     <div className={`step-line ${index < currentStep ? 'completed' : ''}`}></div>
@@ -94,7 +75,7 @@ console.log(nextStep,newStatus);
                     </div>
 
                     <div className="step-labels">
-                        {steps.map((step, index) => (
+                        {steps.map((step) => (
                             <span key={step} className="step-label">{step}</span>
                         ))}
                     </div>
@@ -102,14 +83,7 @@ console.log(nextStep,newStatus);
                     <p>Estimated Delivery: {orderStatus.estimatedDelivery}</p>
                 </div>
             )}
-            {/* Show button only for admins */}
-            {currentStep < steps.length - 1 && isAdmin && (
-                <button onClick={updateStatus} className="status-update-btn">
-                    Move to Next Status
-                </button>
-            )}
         </div>
-
     );
 };
 
