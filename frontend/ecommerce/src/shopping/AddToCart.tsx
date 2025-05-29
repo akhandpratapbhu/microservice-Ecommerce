@@ -52,7 +52,7 @@ const [cartData, setCartData] = useState<cartData>({
                 });
 
                 const result = await response.json();
-                console.log("Cart saved:", result.existingCart);
+                console.log("Cart saved:", result.existingCart,cartData.products.length );
                 setCartData((result.existingCart));
 
             } catch (err) {
@@ -63,7 +63,7 @@ const [cartData, setCartData] = useState<cartData>({
 
         FetchCart(); // Call the async function
     }, [cart]);
-    console.log("products", setCartData, typeof (setCartData));
+    console.log("products", cartData, typeof (setCartData));
     // payment integration
     const makePayment = async () => {
         const stripe = await loadStripe("pk_test_51RO0bOIkMm1UrW60QwzbLTs9PvVvMmw8CZhqg6kp1rxQmY62YQZiAaqcLprLLrbVgHT1zSQFa3OqJaHNkwxhQpO000rS6La0X1");//ENTER YOUR PUBLISHABLE KEY
@@ -138,7 +138,7 @@ const [cartData, setCartData] = useState<cartData>({
                                 backgroundColor: darkMode ? '#121212' : '#f0f0f0',
                             }}
                         >
-                            {cartData.products.length === 0 ? (
+                            {cartData == null ? (
                                 <table className="table cart-table mb-0">
                                     <tbody>
                                         <tr>

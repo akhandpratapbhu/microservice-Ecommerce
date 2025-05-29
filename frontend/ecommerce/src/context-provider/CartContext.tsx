@@ -54,16 +54,16 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     const totalquantity = updatedCart.reduce((sum, item) => sum + Number(item.qnty), 0);
     const totalprice = updatedCart.reduce((sum, item) => sum + item.price * Number(item.qnty), 0);
 
-  saveCartDataInDB(totalquantity,totalprice)
+  saveCartDataInDB(updatedCart,totalquantity,totalprice)
 };
- async function saveCartDataInDB(totalquantity:number,totalprice:number){
+ async function saveCartDataInDB(updatedCart:Product[],totalquantity:number,totalprice:number){
   // Save to backend
     try {
         const customer_id = 1; // Replace with real ID
         await fetch("http://localhost:4242/api/saveInCart", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ products: cart, totalquantity, totalprice, customer_id })
+            body: JSON.stringify({ products: updatedCart, totalquantity, totalprice, customer_id })
         });
         console.log("Cart saved to DB:", totalquantity, totalprice);
     } catch (err) {
@@ -76,23 +76,28 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     toast.success('Item removed from your cart');
   };
 
-  const removeSingleItem = (product: Product) => {
-    const existing = cart.find(p => p._id === product._id);
-    if (existing && (existing.qnty || 1) > 1) {
-      setCart(cart.map(item =>
-        item._id === product._id
-          ? { ...item, qnty: (item.qnty || 1) - 1 }
-          : item
-      ));
-    } else {
-      removeFromCart(product);
-    }
-     // Calculate total quantity and total price
-    const totalquantity = cart.reduce((sum, item) => sum + Number(item.qnty), 0);
-    const totalprice = cart.reduce((sum, item) => sum + item.price * Number(item.qnty), 0);
+const removeSingleItem = (product: Product) => {
+  const existing = cart.find(p => p._id === product._id);
+let updatedCart: Product[];
+  if (existing && (existing.qnty || 1) > 1) {
+   updatedCart= cart.map(item =>
+      item._id === product._id
+        ? { ...item, qnty: (item.qnty || 1) - 1 }
+        : item
+    );
 
-  saveCartDataInDB(totalquantity,totalprice)
-  };
+    setCart(updatedCart);
+
+    // Calculate total quantity and total price
+    const totalquantity = updatedCart.reduce((sum, item) => sum + Number(item.qnty), 0);
+    const totalprice = updatedCart.reduce((sum, item) => sum + item.price * Number(item.qnty), 0);
+
+    saveCartDataInDB(updatedCart, totalquantity, totalprice);
+  } else {
+    removeFromCart(product);
+  }
+};
+
 
   const emptyCart = () => {
     setCart([]);
