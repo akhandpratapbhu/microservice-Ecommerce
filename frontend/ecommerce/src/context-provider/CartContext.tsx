@@ -32,26 +32,45 @@ export const useCart = () => {
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<Product[]>([]);
 
-  const addToCart = (product: Product) => {
+ const addToCart = async (product: Product) => {
+    let updatedCart: Product[];
+
     const existing = cart.find(p => p._id === product._id);
 
-    console.log("existing",existing);
-    console.log("cart",cart)
-    ;console.log("product",product);
     if (existing) {
-      setCart(cart.map(item =>
-        item._id === product._id
-          ? { ...item, qnty: (item.qnty || 1) + 1 }
-          : item
-      ));
+        updatedCart = cart.map(item =>
+            item._id === product._id
+                ? { ...item, qnty: (item.qnty || 1) + 1 }
+                : item
+        );
     } else {
-      setCart([...cart, { ...product, qnty: 1 }]);
-             console.log("elsecart",cart);
-
+        updatedCart = [...cart, { ...product, qnty: 1 }];
     }
+
+    setCart(updatedCart); // update cart state
     toast.success('Item added to your cart');
-  };
- console.log("cartoutside",cart)
+
+    // Calculate total quantity and total price
+    const totalquantity = updatedCart.reduce((sum, item) => sum + Number(item.qnty), 0);
+    const totalprice = updatedCart.reduce((sum, item) => sum + item.price * Number(item.qnty), 0);
+
+  saveCartDataInDB(totalquantity,totalprice)
+};
+ async function saveCartDataInDB(totalquantity:number,totalprice:number){
+  // Save to backend
+    try {
+        const customer_id = 1; // Replace with real ID
+        await fetch("http://localhost:4242/api/saveInCart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ products: cart, totalquantity, totalprice, customer_id })
+        });
+        console.log("Cart saved to DB:", totalquantity, totalprice);
+    } catch (err) {
+        console.error("Error saving to cart:", err);
+    }
+}
+
   const removeFromCart = (product: Product) => {
     setCart(cart.filter(item => item._id !== product._id));
     toast.success('Item removed from your cart');
@@ -68,6 +87,11 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     } else {
       removeFromCart(product);
     }
+     // Calculate total quantity and total price
+    const totalquantity = cart.reduce((sum, item) => sum + Number(item.qnty), 0);
+    const totalprice = cart.reduce((sum, item) => sum + item.price * Number(item.qnty), 0);
+
+  saveCartDataInDB(totalquantity,totalprice)
   };
 
   const emptyCart = () => {

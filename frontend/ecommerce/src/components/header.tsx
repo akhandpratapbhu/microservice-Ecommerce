@@ -9,32 +9,32 @@ import { useEffect, useState } from 'react';
 const Headers = () => {
     const { cart } = useCart();
     const { darkMode, toggleDarkMode } = useTheme();
-     const { t } = useTranslation('navbar');
- const [products, setProducts] = useState<any[]>([]); 
+    const { t } = useTranslation('navbar');
+    const [products, setProducts] = useState<any[]>([]);
 
-useEffect(() => {
-  const FetchCart = async () => {
-   let customerId=1
-      try {
-        const response = await fetch(`http://localhost:4242/api/fetchInCart/${customerId}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json"
-          },
-        });
+    useEffect(() => {
+        const FetchCart = async () => {
+            let customerId = 1
+            try {
+                const response = await fetch(`http://localhost:4242/api/fetchInCart/${customerId}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
 
-        const result = await response.json();
-        console.log("Cart saved:", result.existingCart.products);
-       setProducts(( result.existingCart.products));
+                const result = await response.json();
+                console.log("Cart saved:", result.existingCart.products);
+                setProducts((result.existingCart.products));
 
-      } catch (err) {
-        console.error("Error saving to cart:", err);
-      }
-    }
-  
+            } catch (err) {
+                console.error("Error saving to cart:", err);
+            }
+        }
 
-  FetchCart(); // Call the async function
-},[]);
+
+        FetchCart(); // Call the async function
+    }, [cart]);
 
     return (
         <Navbar

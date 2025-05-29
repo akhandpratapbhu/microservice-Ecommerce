@@ -4,10 +4,22 @@ import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
 import { useTheme } from '../context-provider/themecontext';
 
+export interface cartData {
+  customer_id: number;
+  products: [];
+  totalprice: number;
+  totalquantity: number;
+}
 const AddToCart = () => {
     const { darkMode } = useTheme();
     const { cart, addToCart, removeFromCart, removeSingleItem, emptyCart } = useCart();
-    console.log("cart", cart);
+   // const [cartData, setCartData] = useState<cartData[]>([]);
+const [cartData, setCartData] = useState<cartData>({
+  customer_id: 0,
+  products: [],
+  totalprice: 0,
+  totalquantity: 0,
+});
 
     const handleIncrement = (product: Product) => {
         addToCart(product);
@@ -26,73 +38,12 @@ const AddToCart = () => {
         emptyCart();
     };
 
-    const [totalprice, setPrice] = useState(0);
-    const [totalquantity, setTotalQuantity] = useState(0);
-    const [products, setProducts] = useState<any[]>([]);
-
-
-    // count total price
-    const total = () => {
-        let totalprice = 0
-        cart.map((ele) => {
-            totalprice = ele.price * Number(ele.qnty) + totalprice
-        });
-        setPrice(totalprice)
-    }
-
-
-    // count total quantity
-    const countquantity = () => {
-        let totalquantity = 0
-        cart.map((ele) => {
-            totalquantity = Number(ele.qnty) + totalquantity
-        });
-        setTotalQuantity(totalquantity)
-    }
-
-    useEffect(() => {
-        total()
-    }, [total])
-
-    useEffect(() => {
-        countquantity()
-    }, [countquantity]);
-
-    useEffect(() => {
-        const saveCart = async () => {
-            if (cart && cart.length > 0) {
-                try {
-                    const customer_id = 1;// ✅ Replace with actual logged-in customer ID
-                   // const totalQuantity = cart.reduce((sum, item) => sum + Number(item.qnty), 0);
-                  //  const totalPrice = cart.reduce((sum, item) => sum + item.price * Number(item.qnty), 0);
-                  //  console.log(totalQuantity,totalPrice);
-                    
-                    const response = await fetch("http://localhost:4242/api/saveInCart", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ products: cart, totalquantity, totalprice, customer_id })
-                    });
-
-                    const result = await response.json();
-                    console.log("Cart saved:", result.cartData.products);
-
-                } catch (err) {
-                    console.error("Error saving to cart:", err);
-                }
-            }
-        };
-
-        saveCart(); // Call the async function
-    }, [cart]);
-
 
     useEffect(() => {
         const FetchCart = async () => {
 
             try {
-                let customerId=1
+                let customerId = 1
                 const response = await fetch(`http://localhost:4242/api/fetchInCart/${customerId}`, {
                     method: "GET",
                     headers: {
@@ -101,8 +52,8 @@ const AddToCart = () => {
                 });
 
                 const result = await response.json();
-                console.log("Cart saved:", result.existingCart.products);
-                setProducts((result.existingCart.products));
+                console.log("Cart saved:", result.existingCart);
+                setCartData((result.existingCart));
 
             } catch (err) {
                 console.error("Error saving to cart:", err);
@@ -111,13 +62,13 @@ const AddToCart = () => {
 
 
         FetchCart(); // Call the async function
-    }, []);
-    console.log("products", products, typeof (products));
+    }, [cart]);
+    console.log("products", setCartData, typeof (setCartData));
     // payment integration
     const makePayment = async () => {
         const stripe = await loadStripe("pk_test_51RO0bOIkMm1UrW60QwzbLTs9PvVvMmw8CZhqg6kp1rxQmY62YQZiAaqcLprLLrbVgHT1zSQFa3OqJaHNkwxhQpO000rS6La0X1");//ENTER YOUR PUBLISHABLE KEY
         const body = {
-            products: products
+            products: cartData.products
         }
         const headers = {
             "Content-Type": "application/json"
@@ -187,7 +138,7 @@ const AddToCart = () => {
                                 backgroundColor: darkMode ? '#121212' : '#f0f0f0',
                             }}
                         >
-                            {products.length === 0 ? (
+                            {cartData.products.length === 0 ? (
                                 <table className="table cart-table mb-0">
                                     <tbody>
                                         <tr>
@@ -213,59 +164,8 @@ const AddToCart = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* {cart.map((data) => (
-                                            <tr key={data._id}>
-                                                <td>
-                                                    <button className="prdct-delete" onClick={() => handleDecrement(data)}>
-                                                        <i className="fa fa-trash-alt"></i>
-                                                    </button>
-                                                </td>
-                                                <td>
-                                                    <div className="product-img">
-                                                        <img
-                                                            src={`http://localhost:3001/uploads/${data.image}`}
-                                                            alt={data.name}
-                                                            style={{
-                                                                width: '60px',
-                                                                height: 'auto',
-                                                                borderRadius: '8px',
-                                                                marginLeft: '20px',
-                                                            }}
-                                                        />
-                                                    </div>
-                                                </td>
-                                                <td>{data.name}</td>
-                                                <td>₹ {data.price}</td>
-                                                <td>
-                                                    <div className="prdct-qty-container">
-                                                        <button
-                                                            className="prdct-qty-btn"
-                                                            onClick={
-                                                                Number(data.qnty) <= 1
-                                                                    ? () => handleDecrement(data)
-                                                                    : () => handleSingleDecrement(data)
-                                                            }
-                                                        >
-                                                            <i className="fa fa-minus"></i>
-                                                        </button>
-                                                        <input
-                                                            type="text"
-                                                            className="qty-input-box"
-                                                            value={data.qnty}
-                                                            disabled
-                                                        />
-                                                        <button
-                                                            className="prdct-qty-btn"
-                                                            onClick={() => handleIncrement(data)}
-                                                        >
-                                                            <i className="fa fa-plus"></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                                <td className="text-right">₹ {Number(data.qnty) * data.price}</td>
-                                            </tr>
-                                        ))} */}
-                                        {products.map((data) => (
+                                        
+                                        {cartData.products.map((data: Product) => (
                                             <tr key={data._id}>
                                                 <td>
                                                     <button className="prdct-delete" onClick={() => handleDecrement(data)}>
@@ -323,10 +223,10 @@ const AddToCart = () => {
                                             <th>&nbsp;</th>
                                             <th colSpan={2}>&nbsp;</th>
                                             <th>
-                                                Items In Cart <span className="text-danger">{totalquantity}</span>
+                                                Items In Cart <span className="text-danger">{cartData.totalquantity}</span>
                                             </th>
                                             <th className="text-right">
-                                                Total Price <span className="text-danger">₹ {totalprice}</span>
+                                                Total Price <span className="text-danger">₹ {cartData.totalprice}</span>
                                             </th>
                                             <th className="text-right">
                                                 <button className="btn btn-success" onClick={makePayment}>
